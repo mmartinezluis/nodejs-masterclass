@@ -10,9 +10,11 @@ let server = http.createServer(function(req, res){
 
     const method = req.method.toLowerCase();
 
+    const queryStringObject = parsedUrl.query;
+
     res.end('Hello World\n'); 
 
-    console.log('Request received on path: '+trimmedPath+ 'with method: '+method);
+    console.log('Request received on path: '+trimmedPath+ ' with method: '+method+' and with this query string parameters', queryStringObject);
 })
 
 server.listen(3000, function(){
