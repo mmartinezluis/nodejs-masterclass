@@ -1,6 +1,7 @@
 const http = require('http');
 const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
+const config = require('./config');
 
 let server = http.createServer(function(req, res){
 
@@ -46,7 +47,7 @@ let server = http.createServer(function(req, res){
             payload = typeof(payload) == 'object' ? payload : {};
 
             const payloadString = JSON.stringify(payload);
-            
+
             res.setHeader('Content-Type','application/json');
             res.writeHead(statusCode);
             res.end(payloadString)
@@ -59,8 +60,8 @@ let server = http.createServer(function(req, res){
 })
 
 
-server.listen(3000, function(){
-    console.log("The sever is listening on port 3000 now")
+server.listen(config.port, function(){
+    console.log("The sever is listening on port "+config.port+ " in "+config.envName+" mode")
 })
 
 // Define handlers
