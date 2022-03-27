@@ -3,8 +3,27 @@ const https = require('https')
 const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
 const config = require('./config');
-const fs = require('fs')
+const fs = require('fs');
+const _data = require('./lib/data')
 
+
+// TESTING
+// @tTODO delete this
+_data.create('test','newFile',{'foo': 'bar'}, function(err){
+    console.log('this was the error', err)
+});
+
+// _data.read('test','newFile', function(err,data){
+//     console.log('this was the error', err, 'and this was the data ',data);
+// });
+
+// _data.update('test','newFile',{'fizz' : 'blizz'}, function(err){
+//     console.log('this was the error',err);
+// })
+
+// _data.delete('test','newFile',function(err){
+//     console.log('this was the error',err);
+// })
 
 // Instantiate the HTTP server
 let httpServer = http.createServer(function(req, res){
