@@ -1,9 +1,36 @@
 const http = require('http');
+const https = require('https')
 const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
 const config = require('./config');
+const fs = require('fs')
 
-let server = http.createServer(function(req, res){
+
+// Instantiate the HTTP server
+let httpServer = http.createServer(function(req, res){
+    unifiedServer(req,res);
+})
+
+// Start the HTTP server
+httpServer.listen(config.httpPort, function(){
+    console.log("The sever is listening on port "+config.httpPort)
+})
+
+// Instantiate the HTTPS server
+const httpsServerOptions = {
+    'key' : fs.readFileSync(__dirname + '/https/key.pem'),
+    'cert' : fs.readFileSync(__dirname + '/https/cert.pem')
+}
+let httpsServer = https.createServer(httpsServerOptions, function(req, res){
+    unifiedServer(req,res);
+})
+
+// Start the HTTPS server
+httpsServer.listen(config.httpsPort, function(){
+    console.log("The server is listening on port "+config.httpsPort)
+})
+
+let unifiedServer = function(req,res){
 
     const parsedUrl = url.parse(req.url, true);
 
@@ -57,12 +84,7 @@ let server = http.createServer(function(req, res){
     })
     // console.log('Request received on path: '+trimmedPath+ ' with method: '+method+' and with this query string parameters', queryStringObject);
     // console.log('Reqeust received with these headers: ', headers);
-})
-
-
-server.listen(config.port, function(){
-    console.log("The sever is listening on port "+config.port+ " in "+config.envName+" mode")
-})
+}
 
 // Define handlers
 let handlers = {};
