@@ -2,16 +2,17 @@ const http = require('http');
 const https = require('https')
 const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
-const config = require('./config');
+const config = require('./lib/config');
 const fs = require('fs');
-const _data = require('./lib/data')
+const handlers = require('./lib/handlers');
+const helpers = require('./lib/helpers');
 
 
 // TESTING
 // @tTODO delete this
-_data.create('test','newFile',{'foo': 'bar'}, function(err){
-    console.log('this was the error', err)
-});
+// _data.create('test','newFile',{'foo': 'bar'}, function(err){
+//     console.log('this was the error', err)
+// });
 
 // _data.read('test','newFile', function(err,data){
 //     console.log('this was the error', err, 'and this was the data ',data);
@@ -81,15 +82,15 @@ let unifiedServer = function(req,res){
             'queryStringObject' : queryStringObject,
             'method' : method,
             'headers' : headers,
-            'payload' : buffer
+            'payload' : helpers.parseJsonToObject(buffer)
         }
-
+        console.log(data)
         // Route the request to the handler specified in the router
         chosenHandler(data, function(statusCode, payload){
             // Use the status code called back by the handler, or default to 200
             statusCode = typeof(statusCode) == 'number' ? statusCode : 200;
 
-            // Use the payload call back by the handler, or default ot an empty object
+            // Use the payload called back by the handler, or default to an empty object
             payload = typeof(payload) == 'object' ? payload : {};
 
             const payloadString = JSON.stringify(payload);
@@ -105,24 +106,12 @@ let unifiedServer = function(req,res){
     // console.log('Reqeust received with these headers: ', headers);
 }
 
-// Define handlers
-let handlers = {};
 
-handlers.ping = function(data, callback){
-    callback(200);
-}
-
-handlers.notFound = function(data, callback){
-    callback(404);
-};
-
-// handlers.sample = function(data, callback){
-//     callback(406,{'name' : 'sample handler'});
-// };
 
 
 // Request Router
 let router = {
-    'ping' : handlers.ping
-    // 'sample' : handlers.sample
+    'ping' : handlers.ping,
+    'users': handlers.users,
+    'sample' : handlers.sample,
 };
