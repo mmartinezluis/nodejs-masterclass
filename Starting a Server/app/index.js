@@ -7,6 +7,11 @@ const fs = require('fs');
 const handlers = require('./lib/handlers');
 const helpers = require('./lib/helpers');
 
+//  @TODO GET RID OF THIS
+helpers.sendTwilioSms('9292044094',"Hello",function(err){
+    console.log('this was the error',err);
+});
+
 
 // TESTING
 // @tTODO delete this

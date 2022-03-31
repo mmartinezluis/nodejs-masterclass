@@ -1,8 +1,11 @@
 // Helpers for various taks
 
 // Dependencies
-const crypto = require('crypto');
-const config = require('./config')
+let crypto = require('crypto');
+let config = require('./config');
+let https = require('https');
+let querystring = require('querystring');
+const { URLSearchParams } = require('url');
 
 // Container for all the helpers
 const helpers = {};
@@ -49,6 +52,65 @@ helpers.createRandomString = function(strLength){
     } else {
         return false;
     }
+}
+
+// Send an SMS message via Twilio
+helpers.sendTwilioSms = function(phone,msg,callback){
+    // Validate the parameters
+    phone = typeof(phone) == 'string' && phone.trim().length == 10 ? phone.trim() : false;
+    msg = typeof(msg) == 'string' && msg.trim().length > 0 && msg.trim().length <= 1600 ? msg.trim() : false;
+    if(phone && msg){
+        // Configure the request payload
+        const payload = {
+            'From' : config.twilio.fromPhone,
+            'To' : '+1'+phone,
+            'Body' : msg
+        };
+
+        // Stringify the paylaod
+                // @TODO: User URLSearchParams instead of querystring
+        const stringPayload = querystring.stringify(payload);
+
+        // Configure the request details
+        let requestDetails = {
+            'protocol' : 'https:',
+            'hostname' : 'api.twilio.com',
+            'method' : 'POST',
+            'path' : '/2010-04-01/Accounts/'+config.twilio.accountSid+'/Message.json',
+            'auth' : config.twilio.accountSid+':'+config.twilio.authToken,
+            'headers' : {
+                'Content-type' : 'application/x-www-form-urlencoded',
+                'Content-length' : Buffer.byteLength(stringPayload)
+            }
+        };
+
+        // Instantiate the request object
+        let req = https.request(requestDetails,function(res){
+            // Grab the status of the sent request
+            let status = res.statusCode;
+            // Callback successfully if the reuqest wnet through
+            if(status == 200 || status == 201){
+                callback(false);
+            } else {
+                callback('Status code returned was '+status);
+            }
+        });
+
+        // Bind to the error event so it doesn't ge thrown
+        req.on('error',function(e){
+            callback(e);
+        });
+
+        // Add the payload
+        req.write(stringPayload);
+
+        // End the request
+        req.end();
+
+    } else {
+        callback('Given parameters wee missing or invalid');
+    }
+
 }
 
 
