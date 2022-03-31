@@ -178,11 +178,11 @@ handlers._users.put = function(data,callback){
 
 // Users - delete
 // Required field: phone
-// @TODO Only let an authenticated user delte their object. Don't let them dellete anyone elses
+// @TODO Only let an authenticated user delete their object. Don't let them delete anyone elses
 // @TODO Cleanup (delete) any other data files associated with this user
 handlers._users.delete = function(data,callback){
     // Check for the phone is valid
-    const phone = typeof(data.payload.phone) == 'string' && data.payload.phone.trim().length == 10 ? data.payload.phone.trim() : false;
+    const phone = typeof(data.queryStringObject.phone) == 'string' && data.queryStringObject.phone.trim().length == 10 ? data.queryStringObject.phone.trim() : false;
     if(phone){
 
         // Get the token from the headers
@@ -604,9 +604,8 @@ handlers._checks.put = function(data,callback){
 // Optional data : none
 handlers._checks.delete = function(data,callback){
     // Check for the id is valid
-    const id = typeof(data.payload.id) == 'string' && data.payload.id.trim().length == 20 ? data.payload.id.trim() : false;
+    const id = typeof(data.queryStringObject.id) == 'string' && data.queryStringObject.id.trim().length == 20 ? data.queryStringObject.id.trim() : false;
     if(id){
-
         // Lookup the check
         _data.read('checks',id,function(err,checkData){
             if(!err && checkData){
@@ -653,11 +652,10 @@ handlers._checks.delete = function(data,callback){
                     }
                 });
             } else {
+                // 403 Forbidden
                 callback(403,{'Error' : 'The specified check ID does not exist'})
             }
-        })
-
-
+        });
     } else {
         callback(400,{'Error': 'Missing required field'})
     }
