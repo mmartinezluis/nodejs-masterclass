@@ -7,6 +7,7 @@ let https = require('https');
 let querystring = require('querystring');
 const { URLSearchParams } = require('url');
 
+
 // Container for all the helpers
 const helpers = {};
 
@@ -68,7 +69,7 @@ helpers.sendTwilioSms = function(phone,msg,callback){
         };
 
         // Stringify the paylaod
-                // @TODO: User URLSearchParams instead of querystring
+                // @TODO: User URLSearchParams module instead of querystring module
         const stringPayload = querystring.stringify(payload);
 
         // Configure the request details
@@ -83,6 +84,8 @@ helpers.sendTwilioSms = function(phone,msg,callback){
                 'Content-length' : Buffer.byteLength(stringPayload)
             }
         };
+        console.log(config.twilio.accountSid)
+        console.log(config.twilio.authToken)
 
         // Instantiate the request object
         let req = https.request(requestDetails,function(res){
@@ -108,7 +111,7 @@ helpers.sendTwilioSms = function(phone,msg,callback){
         req.end();
 
     } else {
-        callback('Given parameters wee missing or invalid');
+        callback('Given parameters were missing or invalid');
     }
 
 }
