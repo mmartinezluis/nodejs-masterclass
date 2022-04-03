@@ -18,7 +18,7 @@ environments.staging = {
         // 'fromPhone' : '+15005550006'
         'accountSid' : twilioCredentials.TWILIO_ACCOUNT_SID,
         'authToken' : twilioCredentials.TWILIO_AUTH_TOKEN,
-        'fromPhone' : '+15005550006'
+        'fromPhone' : '+13335558888'
     }
 };
 

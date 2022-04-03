@@ -77,11 +77,11 @@ helpers.sendTwilioSms = function(phone,msg,callback){
             'protocol' : 'https:',
             'hostname' : 'api.twilio.com',
             'method' : 'POST',
-            'path' : '/2010-04-01/Accounts/'+config.twilio.accountSid+'/Message.json',
+            'path' : '/2010-04-01/Accounts/'+config.twilio.accountSid+'/Messages.json',
             'auth' : config.twilio.accountSid+':'+config.twilio.authToken,
             'headers' : {
-                'Content-type' : 'application/x-www-form-urlencoded',
-                'Content-length' : Buffer.byteLength(stringPayload)
+                'Content-Type' : 'application/x-www-form-urlencoded',
+                'Content-Length' : Buffer.byteLength(stringPayload)
             }
         };
         console.log(config.twilio.accountSid)
