@@ -102,38 +102,36 @@ workers.performCheck = function(originalCheckData){
             workers.processCheckOoutcome(originalCheckData,checkOutcome);
             outcomeSent = true;
         }
-
-        // Bind to the error event so it doesn't get thrown
-        req.on('error',function(e){
-            // Update the checkOutcome and pass the data along
-            checkOutcome.error = {
-                'error' : true,
-                'value' : e
-            };
-            if(!outcomeSent){
-                workers.processCheckOoutcome(originalCheckData,checkOutcome);
-                outcomeSent = true;
-            }
-        });
-
-        // Bind to the timeot event
-        req.on('timeout',function(e){
-            // Update the checkOutcome and pass the data along
-            checkOutcome.error = {
-                'error' : true,
-                'value' : 'timeout'
-            };
-            if(!outcomeSent){
-                workers.processCheckOoutcome(originalCheckData,checkOutcome);
-                outcomeSent = true;
-            }
-        });
-
-        // End the request
-        req.end();
-
     });
-     
+
+    // Bind to the error event so it doesn't get thrown
+    req.on('error',function(e){
+        // Update the checkOutcome and pass the data along
+        checkOutcome.error = {
+            'error' : true,
+            'value' : e
+        };
+        if(!outcomeSent){
+            workers.processCheckOoutcome(originalCheckData,checkOutcome);
+            outcomeSent = true;
+        }
+    });
+
+    // Bind to the timeot event
+    req.on('timeout',function(e){
+        // Update the checkOutcome and pass the data along
+        checkOutcome.error = {
+            'error' : true,
+            'value' : 'timeout'
+        };
+        if(!outcomeSent){
+            workers.processCheckOoutcome(originalCheckData,checkOutcome);
+            outcomeSent = true;
+        }
+    });
+
+    // End the request
+    req.end();     
 };
 
 
@@ -172,9 +170,9 @@ workers.alertUserToStatusChange = function(newCheckData){
     const msg =  'Alert: Your check for '+newCheckData.method.toUpperCase()+' '+newCheckData.protocol+'://'+newCheckData.url+' is currently '+newCheckData.state;
     helpers.sendTwilioSms(newCheckData.userPhone,msg,function(err){
         if(!err){
-            console.log('Success: User was alerted to a status change in their check via sms');
+            console.log('Success: User was alerted to a status change in their check via sms',msg);
         } else {
-            console.log('Error: Could not send sms alert to user who had a state change in their check');
+            console.log('Error: Could not send sms alert to user who had a state change in their check',err);
         }
     })
 };

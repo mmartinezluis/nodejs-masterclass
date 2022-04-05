@@ -19,7 +19,6 @@ const server = {};
 
 //  @TODO GET RID OF THIS
 // helpers.sendTwilioSms('4158375309',"Hello",function(err){
-// helpers.sendTwilioSms('2224447777',"Hi there!",function(err){
 //     console.log('this was the error',err);
 // });
 

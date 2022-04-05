@@ -84,8 +84,6 @@ helpers.sendTwilioSms = function(phone,msg,callback){
                 'Content-Length' : Buffer.byteLength(stringPayload)
             }
         };
-        console.log(config.twilio.accountSid)
-        console.log(config.twilio.authToken)
 
         // Instantiate the request object
         let req = https.request(requestDetails,function(res){
