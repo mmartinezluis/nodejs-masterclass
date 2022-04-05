@@ -7,6 +7,9 @@
 const server = require('./lib/server');
 const workers = require('./lib/workers');
 
+// To see logs related to HTTP, start the app with thsi command:
+        // NODE_DEBUG=http node index.js
+
 // Declare the app
 const app = {};
 
