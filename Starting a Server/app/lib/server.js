@@ -95,7 +95,11 @@ server.unifiedServer = function(req,res){
         }
         
         // Route the request to the handler specified in the router
-        chosenHandler(data, function(statusCode, payload){
+        chosenHandler(data, function(statusCode, payload,contentType){
+
+            // Determinte the type of response f(fallback to JSON)
+            contentType = typeof(contentType) == 'string' ? contentType : 'json';
+
             // Use the status code called back by the handler, or default to 200
             statusCode = typeof(statusCode) == 'number' ? statusCode : 200;
 
@@ -127,11 +131,20 @@ server.unifiedServer = function(req,res){
 
 // Request Router
 server.router = {
+    '' : handlers.index,
+    'account/create' : handlers.accountCreate,
+    'account/edit' : handlers.accountEdit,
+    'account/deleted' : handlers.accountDeleted,
+    'session/create' : handlers.sessionCreate,
+    'session/deleted' : handlers.sessionDeleted,
+    'checks/all' : handlers.checkList,
+    'checks/create' : handlers.checksCreate,
+    'checks/edit' : handlers.checksEdit,
     'ping' : handlers.ping,
-    'users': handlers.users,
+    'api/users': handlers.users,
+    'api/tokens' : handlers.tokens,
+    'api/checks' : handlers.checks,
     'sample' : handlers.sample,
-    'tokens' : handlers.tokens,
-    'checks' : handlers.checks
 };
 
 // Init script
