@@ -103,15 +103,24 @@ server.unifiedServer = function(req,res){
             // Use the status code called back by the handler, or default to 200
             statusCode = typeof(statusCode) == 'number' ? statusCode : 200;
 
-            // Use the payload called back by the handler, or default to an empty object
-            payload = typeof(payload) == 'object' ? payload : {};
+            // Return the response-parts that are content-specific
+            let payloadString = '';
+            if(contentType == 'json'){
+                res.setHeader('Content-Type','application/json');
+                payload = typeof(payload) == 'object' ? payload : {};
+                payloadString = JSON.stringify(payload);
+            }
+            if(contentType == 'html'){
+                res.setHeader('Content-Type','text/html');
+                payloadString = typeof(payload) == 'string' ? payload : '';
+            }
 
-            const payloadString = JSON.stringify(payload);
 
-            res.setHeader('Content-Type','application/json');
+            // Return the response-parts that are common to all content-type
             res.writeHead(statusCode);
             res.end(payloadString);
 
+       
             // If the response is 200, print green; otherwise print red
             if(statusCode == 200){
                 debug('\x1b[32m%s\x1b[0m',method.toUpperCase()+' /'+trimmedPath+' '+statusCode);  

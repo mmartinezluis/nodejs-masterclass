@@ -11,7 +11,7 @@ const url = require('url');
 const helpers = require('./helpers');
 const _logs = require('./logs');
 const util = require('util');
-const debug = util.debuglog('workers')
+const debug = util.debuglog('workers');
 
 
 // Satrt the app with 'NODE_DEBUG=workers node index.js' to see workers logs
