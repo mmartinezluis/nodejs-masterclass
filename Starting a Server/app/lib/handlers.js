@@ -24,7 +24,6 @@ handlers.index = function(data,callback){
             'body.title' : 'Hello templated world',
             'body.class' : 'index'
         };
-
         // Read in the index template as a string
         helpers.getTemplate('index',templateData,function(err,str){
             if(!err && str){
@@ -46,24 +45,69 @@ handlers.index = function(data,callback){
     }
 };
 
-/*
-handlers.index = function(data,callback){
-    // Reject any request that isn't a GET
-    if(data.method == 'get'){
-      // Read in a template as a string
-      helpers.getTemplate('index',function(err,str){
-        if(!err && str){
-          callback(200,str,'html');
-        } else {
-          callback(500,undefined,'html')
+// Favicon
+handlers.favicon = function(data,callback){
+   // Reject any request that isn't a  GET
+   if(data.method == 'get'){
+    //  Read in the favicon's data
+    helpers.getStaticAssets('favicon.ico',function(err,data){
+        if(!err && data){
+            // Callback the data
+            callback(200,data,'favicon');
+        } else {    
+            callback(500);
         }
-      });
-      // Return that template as HTML
+    });
+   } else {
+       // 405 'Not Allowed'
+       callback(405);
+   }
+};
+
+// Public assests
+handlers.public = function(data,callback){
+    // Reject any request that isn't a  GET
+    if(data.method == 'get'){
+     //  Read in the favicon's data
+        let trimmedAssetName = data.trimmedPath.replace('public','').trim();
+        if(trimmedAssetName.length > 0){
+            //  Read in the asset's data
+            helpers.getStaticAsset(trimmedAssetName,function(err,data){
+                if(!err && data){ 
+                    // Determine the content type and default to plain text
+                    let contentType = 'plain';
+
+                    if(trimmedAssetName.indexOf('.css') > -1){
+                        contentType = 'css';
+                    }
+
+                    if(trimmedAssetName.indexOf('.png') > -1){
+                        contentType = 'png';
+                    }
+
+                    if(trimmedAssetName.indexOf('.jpg') > -1){
+                        contentType = 'jpg';
+                    }
+
+                    if(trimmedAssetName.indexOf('.ico') > -1){
+                        contentType = 'favicon';
+                    }
+
+                    // Callback the data
+                    callback(200,data,contentType);
+                } else {    
+                    // 404 'Not Found'
+                    callback(404);
+                }
+            });
+        }
     } else {
-      callback(405,undefined,'html');
+        // 405 'Not Allowed'
+        callback(405);
     }
-  };
-*/
+};
+
+
 
 /*
  * JSON API Handlers

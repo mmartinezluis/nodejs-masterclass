@@ -15,6 +15,7 @@ const path = require('path');
 const util = require('util');
 const debug = util.debug('server');
 
+
 // Start the app with this command to render logs for server: 'NODE_DEBUG=server node index.js'
 
 // Instantiate the server module object
@@ -83,7 +84,10 @@ server.unifiedServer = function(req,res){
         buffer += decoder.end();
 
         // Chosse the handler the request should go to; if one is not found is the not found handler
-        const chosenHandler = typeof(server.router[trimmedPath]) !== 'undefined' ? server.router[trimmedPath] : handlers.notFound;
+        let chosenHandler = typeof(server.router[trimmedPath]) !== 'undefined' ? server.router[trimmedPath] : handlers.notFound;
+
+        // If the request is within the public directory, use the public handler instead
+        chosenHandler = trimmedPath.indexOf('public/') > -1 ? handlers.public : chosenHandler;
 
         // Contruct data object to send to handler
         let data = {
@@ -113,6 +117,26 @@ server.unifiedServer = function(req,res){
             if(contentType == 'html'){
                 res.setHeader('Content-Type','text/html');
                 payloadString = typeof(payload) == 'string' ? payload : '';
+            }
+            if(contentType == 'favicon'){
+                res.setHeader('Content-Type','image/x-icon');
+                payloadString = typeof(payload) !== 'undefined' ? payload : '';
+            }
+            if(contentType == 'css'){
+                res.setHeader('Content-Type','text/css');
+                payloadString = typeof(payload) !== 'undefined' ? payload : '';
+            }
+            if(contentType == 'png'){
+                res.setHeader('Content-Type','image/png');
+                payloadString = typeof(payload) !== 'undefined' ? payload : '';
+            }
+            if(contentType == 'jpg'){
+                res.setHeader('Content-Type','image/jpeg');
+                payloadString = typeof(payload) !== 'undefined' ? payload : '';
+            }
+            if(contentType == 'plain'){
+                res.setHeader('Content-Type','text/plain');
+                payloadString = typeof(payload) !== 'undefined' ? payload : '';
             }
 
 
@@ -154,6 +178,8 @@ server.router = {
     'api/tokens' : handlers.tokens,
     'api/checks' : handlers.checks,
     'sample' : handlers.sample,
+    'favicon.ico' : handlers.favicon,
+    'public' : handlers.public
 };
 
 // Init script

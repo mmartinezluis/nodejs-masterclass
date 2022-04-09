@@ -41,7 +41,7 @@ environments.production = {
     },
     'templateGlobals' : {
         'appName' : 'UptimeChecker',
-        'companyName' : 'NotARealCompnay, Inc',
+        'companyName' : 'NotARealCompany, Inc',
         'yearCreated' : '2018',
         'baseUrl' : 'http://localhost:500/'
     }
