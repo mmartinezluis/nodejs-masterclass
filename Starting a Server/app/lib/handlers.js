@@ -17,6 +17,7 @@ let handlers = {};
 handlers.index = function(data,callback){
     // Reject any request that isn't a  GET
     if(data.method == 'get'){
+
         // Prepare data for interpolation
         let templateData = {
             'head.title' : 'Uptime Monitoring = Made Simple',
@@ -37,6 +38,38 @@ handlers.index = function(data,callback){
                 }); 
             } else {
                  callback(500,undefined,'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+};
+
+// Create Account
+handlers.accountCreate = function(data, callback){
+    // Reject any request that isn't a  GET
+    if(data.method == 'get'){
+
+        // Prepare data for interpolation
+        let templateData = {
+            'head.title' : 'Create an Account',
+            'head.description' : 'Signup is easy and only takes a few seconds.',
+            'body.class' : 'account/create'
+        };
+        // Read in the index template as a string
+        helpers.getTemplate('accountCreate',templateData,function(err,str){
+            if(!err && str){
+                // Add the universal header and footer
+                helpers.addUniversalTemplate(str,templateData,function(err,str){
+                    if(!err && str){
+                        // Return that page as HTML
+                        callback(200,str,'html');
+                    } else {
+                        callback(500,undefined,'html');       
+                    }
+                }); 
+            } else {
+                    callback(500,undefined,'html');
             }
         });
     } else {
