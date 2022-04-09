@@ -109,6 +109,38 @@ handlers.sessionCreate = function(data, callback){
     }
 };
 
+// Sesion has been deleted
+handlers.sessionDeleted = function(data, callback){
+    // Reject any request that isn't a  GET
+    if(data.method == 'get'){
+
+        // Prepare data for interpolation
+        let templateData = {
+            'head.title' : 'Logged Out',
+            'head.description' : 'You have been logged out of your account.',
+            'body.class' : 'session/deleted'
+        };
+        // Read in the index template as a string
+        helpers.getTemplate('sessionDeleted',templateData,function(err,str){
+            if(!err && str){
+                // Add the universal header and footer
+                helpers.addUniversalTemplate(str,templateData,function(err,str){
+                    if(!err && str){
+                        // Return that page as HTML
+                        callback(200,str,'html');
+                    } else {
+                        callback(500,undefined,'html');       
+                    }
+                }); 
+            } else {
+                    callback(500,undefined,'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+};
+
 // Favicon
 handlers.favicon = function(data,callback){
    // Reject any request that isn't a  GET
