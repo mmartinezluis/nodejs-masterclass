@@ -19,6 +19,12 @@ environments.staging = {
         // 'accountSid' : twilioCredentials.TWILIO_ACCOUNT_SID,
         // 'authToken' : twilioCredentials.TWILIO_AUTH_TOKEN,
         // 'fromPhone' : '+14446668888'
+    },
+    'templateGlobals' : {
+        'appName' : 'UptimeChecker',
+        'companyName' : 'NotARealCompnay, Inc',
+        'yearCreated' : '2018',
+        'baseUrl' : 'http://localhost:3000/'
     }
 };
 
@@ -32,6 +38,12 @@ environments.production = {
         'accountSid' : '',
         'authToken' : '',
         'fromPhone' : ''
+    },
+    'templateGlobals' : {
+        'appName' : 'UptimeChecker',
+        'companyName' : 'NotARealCompnay, Inc',
+        'yearCreated' : '2018',
+        'baseUrl' : 'http://localhost:500/'
     }
 };
 

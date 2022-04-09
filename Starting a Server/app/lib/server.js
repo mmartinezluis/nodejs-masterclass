@@ -62,17 +62,17 @@ server.httpsServer = https.createServer(server.httpsServerOptions, function(req,
 server.unifiedServer = function(req,res){
 
     const parsedUrl = url.parse(req.url, true);
-
+    
     const path = parsedUrl.pathname;
-
+    
     const trimmedPath = path.replace(/^\/+|\/+$/g,'');
-
+    
     const queryStringObject = parsedUrl.query;
-
+    
     const method = req.method.toLowerCase();
-
+    
     const headers = req.headers;    
-
+    
     // Get the payload
     let decoder = new StringDecoder('utf-8');
     let buffer = '';
@@ -97,7 +97,7 @@ server.unifiedServer = function(req,res){
         // Route the request to the handler specified in the router
         chosenHandler(data, function(statusCode, payload,contentType){
 
-            // Determinte the type of response f(fallback to JSON)
+            // Determinte the type of response (fallback to JSON)
             contentType = typeof(contentType) == 'string' ? contentType : 'json';
 
             // Use the status code called back by the handler, or default to 200
