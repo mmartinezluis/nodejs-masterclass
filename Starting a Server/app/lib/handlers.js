@@ -22,7 +22,7 @@ handlers.index = function(data,callback){
             'head.title' : 'This is the title',
             'head.description' : 'This is the meta description',
             'body.title' : 'Hello templated world',
-            'body.classs' : 'index'
+            'body.class' : 'index'
         };
 
         // Read in the index template as a string
