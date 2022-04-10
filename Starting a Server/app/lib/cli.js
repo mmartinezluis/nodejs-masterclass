@@ -64,9 +64,88 @@ cli.responders = {};
 
 // Help / Man
 cli.responders.help = function(){
-    console.log('You asked for help');
+    let commands = {
+        'exit': 'Kill the CLI (and the rest of the application)',
+        'man': 'Soow this help page',
+        'help': 'Alias of the "man" command',
+        'stats': 'Get statitics on the underlying operating system and resource utilization',
+        'list users': 'Show a list of all the registered (undeleted) users in the system',
+        'more user info --{userId}': 'Show details of a specific user',
+        'list chekcs --up --down': 'Show alit of all the active checks in the system, including their state. The "--up" and the "--down" flags are both optional',
+        'more check info --{checkId}': 'Show details of a specified check',
+        'list logs': 'Show a list of all the log files available to be read (compressed and uncompressed)',
+        'more log info --{fileNmae}': 'Show details of a specified log file'
+    };
+
+    // SHow a header for the help age that is as die as the screen
+    cli.horizontalLine();
+    cli.centered('CLI MANUAL');
+    cli.horizontalLine();
+    cli.verticalSpace(2);
+
+    // Show eaach command, followed by its explation in white and yellow, respectively
+    for(let key in commands){
+        if(commands.hasOwnProperty(key)){
+            let value = commands[key];
+            let line = '      \x1b[33m '+key+'      \x1b[0m';
+            let padding = 80 - line.length;
+            for(i = 0; i < padding; i++){
+                line+=' ';
+            }
+            line+=value;
+            console.log(line);
+            cli.verticalSpace();
+        }
+    }
+
+    cli.verticalSpace(1);
+
+    // End with another horizontal line
+    cli.horizontalLine();
 };
- 
+
+// Cretae a vertical space
+cli.verticalSpace = function(lines){
+    lines = typeof(lines) == 'number' && lines.length > 0 ? lines : 1;
+    for(i = 0; i < lines; i++){
+        console.log('');
+    }
+};
+
+// Create a horizontal lines across the screen
+cli.horizontalLine = function(){
+    // Get the available screen size
+    let width = process.stdout.columns;
+
+    let line = '';
+    for(i = 0; i < width; i++){
+        line+='-';
+    }
+    console.log(line);
+};
+
+
+// Create centered text on the screen
+cli.centered = function(str){
+    str = typeof(str) == 'string' && str.trim().length >  0 ? str.trim() : '';
+
+    // Get the available screen size
+    let width = process.stdout.columns;
+
+    // Calculate the left padding there should be
+    let leftPadding = Math.floor((width - str.length) / 2);
+
+    // Put in left padded spcaes beefore the string itseflf
+    let line = '';
+    for(i = 0; i< leftPadding; i++){
+        line+=' ';
+    }
+    line+= str;
+    console.log(line);
+};
+
+
+
 // Exit
 cli.responders.exit = function(){
     process.exit(0);
