@@ -270,10 +270,10 @@ workers.init = function(){
     workers.loop();
 
     // Compress all the logs immediately
-    // workers.rotateLogs();
+    workers.rotateLogs();
  
     // Call the compression loop so logs will be compressed later on
-    // workers.logRatationLoop();
+    workers.logRatationLoop();
 };
 
 

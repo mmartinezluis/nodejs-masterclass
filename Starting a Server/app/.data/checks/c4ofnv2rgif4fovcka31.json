@@ -1,1 +1,1 @@
-{"id":"c4ofnv2rgif4fovcka31","userPhone":"4151234567","protocol":"https","url":"twitter.com","method":"put","successCodes":[200,201,301,302],"timeoutSeconds":2}
+{"id":"c4ofnv2rgif4fovcka31","userPhone":"4151234567","protocol":"http","url":"twitter.com","method":"get","successCodes":[200,201,301,302,400,403],"timeoutSeconds":3,"state":"up","lastChecked":1649621274019}
