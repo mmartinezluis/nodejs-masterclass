@@ -118,7 +118,7 @@ handlers.sessionDeleted = function(data, callback){
         let templateData = {
             'head.title' : 'Logged Out',
             'head.description' : 'You have been logged out of your account.',
-            'body.class' : 'session/deleted'
+            'body.class' : 'sessionDeleted'
         };
         // Read in the index template as a string
         helpers.getTemplate('sessionDeleted',templateData,function(err,str){
@@ -185,6 +185,37 @@ handlers.accountDeleted = function(data, callback){
         };
         // Read in the index template as a string
         helpers.getTemplate('accountDeleted',templateData,function(err,str){
+            if(!err && str){
+                // Add the universal header and footer
+                helpers.addUniversalTemplate(str,templateData,function(err,str){
+                    if(!err && str){
+                        // Return that page as HTML
+                        callback(200,str,'html');
+                    } else {
+                        callback(500,undefined,'html');       
+                    }
+                }); 
+            } else {
+                    callback(500,undefined,'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+};
+
+// Create a new check
+handlers.checksCreate = function(data, callback){
+    // Reject any request that isn't a  GET
+    if(data.method == 'get'){
+
+        // Prepare data for interpolation
+        let templateData = {
+            'head.title' : 'Create a New Check',
+            'body.class' : 'checksCreate'
+        };
+        // Read in the index template as a string
+        helpers.getTemplate('checksCreate',templateData,function(err,str){
             if(!err && str){
                 // Add the universal header and footer
                 helpers.addUniversalTemplate(str,templateData,function(err,str){
@@ -752,7 +783,7 @@ handlers._checks.post =function(data,callback){
                     }
                 });
             } else {
-                // 403 Not Authorized
+                // 403 Not Authorized (Forbidden)
                 callback(403);
             }
         });
