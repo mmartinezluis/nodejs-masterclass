@@ -235,6 +235,37 @@ handlers.checksCreate = function(data, callback){
     }
 };
 
+// Dashboard (view all checks)
+handlers.checksList = function(data, callback){
+    // Reject any request that isn't a  GET
+    if(data.method == 'get'){
+
+        // Prepare data for interpolation
+        let templateData = {
+            'head.title' : 'Dashboard',
+            'body.class' : 'checksList'
+        };
+        // Read in the index template as a string
+        helpers.getTemplate('checksList',templateData,function(err,str){
+            if(!err && str){
+                // Add the universal header and footer
+                helpers.addUniversalTemplate(str,templateData,function(err,str){
+                    if(!err && str){
+                        // Return that page as HTML
+                        callback(200,str,'html');
+                    } else {
+                        callback(500,undefined,'html');       
+                    }
+                }); 
+            } else {
+                    callback(500,undefined,'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+};
+
 // Favicon
 handlers.favicon = function(data,callback){
    // Reject any request that isn't a  GET
