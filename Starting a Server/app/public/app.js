@@ -95,7 +95,10 @@ app.bindLogoutButton = function(){
   };
   
   // Log the user out then redirect them
-  app.logUserOut = function(){
+  app.logUserOut = function(redirectUser){
+    // Set redirectUser to default to true
+    redirectUser = typeof(redirectUser) == 'boolean' ? redirectUser : true;
+  
     // Get the current token id
     var tokenId = typeof(app.config.sessionToken.id) == 'string' ? app.config.sessionToken.id : false;
   
@@ -108,7 +111,9 @@ app.bindLogoutButton = function(){
       app.setSessionToken(false);
   
       // Send the user to the logged out page
-      window.location = '/session/deleted';
+      if(redirectUser){
+        window.location = '/session/deleted';
+      }
   
     });
   };
@@ -151,8 +156,11 @@ app.bindLogoutButton = function(){
             }
           }
   
+          // If the method is DELETE, the payload should be a queryStringObject instead
+          var queryStringObject = method == 'DELETE' ? payload : {};
+  
           // Call the API
-          app.client.request(undefined,path,method,undefined,payload,function(statusCode,responsePayload){
+          app.client.request(undefined,path,method,queryStringObject,payload,function(statusCode,responsePayload){
             // Display an error on the form if needed
             if(statusCode !== 200){
   
@@ -220,6 +228,12 @@ app.bindLogoutButton = function(){
     var formsWithSuccessMessages = ['accountEdit1', 'accountEdit2'];
     if(formsWithSuccessMessages.indexOf(formId) > -1){
       document.querySelector("#"+formId+" .formSuccess").style.display = 'block';
+    }
+  
+    // If the user just deleted their account, redirect them to the account-delete page
+    if(formId == 'accountEdit3'){
+      app.logUserOut(false);
+      window.location = '/account/deleted';
     }
   
   };
