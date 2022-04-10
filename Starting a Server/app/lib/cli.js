@@ -66,10 +66,10 @@ cli.responders = {};
 cli.responders.help = function(){
     console.log('You asked for help');
 };
-
+ 
 // Exit
 cli.responders.exit = function(){
-    console.log('You asked for exit');
+    process.exit(0);
 };
 
 // Stats
