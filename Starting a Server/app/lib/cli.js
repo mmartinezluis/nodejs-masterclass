@@ -44,7 +44,7 @@ e.on('more user info',function(str){
     cli.responders.moreUserInfo(str);
 });
 
-e.on('list chekcs',function(str){
+e.on('list checks',function(str){
     cli.responders.listChecks(str);
 });
 
@@ -240,7 +240,29 @@ cli.responders.moreUserInfo = function(str){
 
 // List checks
 cli.responders.listChecks = function(str){
-    console.log('You asked to list checks',str);
+    _data.list('checks',function(err,checkIds){
+        if(!err && checkIds && checkIds.length > 0){
+            cli.verticalSpace();
+            checkIds.forEach(function(checkId){
+                _data.read('checks',checkId,function(err,checkData){
+                    if(!err && checkData){
+                        // let includeCheck = false;
+                        let lowerString = str.toLowerCase();
+                        // Get the state, default to down
+                        let state = typeof(checkData.state) == 'string' ? checkData.state : 'down';
+                        // Get the state default to unkonw
+                        let stateOrUnknown = typeof(checkData.state) == 'string' ? checkData.state : 'unknown';
+                        // If the suer has specified the state or hasn't specified any state, include the current check accordingly
+                        if((lowerString.indexOf('--'+state) > -1) || (lowerString.indexOf('--down') == -1 && lowerString.indexOf('--up') == -1)) {
+                            let line = 'ID: '+checkData.id+' '+checkData.method.toUpperCase()+' '+checkData.protocol+'://'+checkData.url+' State: '+stateOrUnknown;
+                            console.log(line);
+                            cli.verticalSpace();
+                        }
+                    }
+                })
+            })
+        }
+    })
 };
 
 // More check info
@@ -273,7 +295,7 @@ cli.processInput = function(str){
             'stats',
             'list users',
             'more user info',
-            'list chekcs',
+            'list checks',
             'more check info',
             'list logs',
             'more log info'
