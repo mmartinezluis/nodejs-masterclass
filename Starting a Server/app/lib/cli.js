@@ -11,6 +11,8 @@ let events = require('events');
 const { read } = require('./data');
 class _events extends events{};
 let e = new _events();
+let os = require('os');
+let v8 = require('v8');
 
 // Instatiate the CLI module object
 let cli = {};
@@ -153,7 +155,45 @@ cli.responders.exit = function(){
 
 // Stats
 cli.responders.stats = function(){
-    console.log('You asked for stats');
+    // Compoile an object of stats
+    let stats = {
+        'Load Average' : os.loadavg().join(' '),
+        'CPU Count' : os.cpus().length,
+        'Free Memory' : os.freemem(),
+        'Currrent Malloced Memory' : v8.getHeapStatistics().malloced_memory,
+        'Peak Malloced Memory' : v8.getHeapStatistics().peak_malloced_memory,
+        'Allocated Heap Used (%)' : Math.round((v8.getHeapStatistics().used_heap_size / v8.getHeapStatistics().total_heap_size) * 100) ,
+        'Available Heap Allocated (%)' : Math.round((v8.getHeapStatistics().total_heap_size / v8.getHeapStatistics().heap_size_limit) * 100),
+        'Uptime' : os.uptime()+' Seconds '
+    };
+ 
+    // Create a header for the stats
+    cli.horizontalLine();
+    cli.centered('SYSTEM STATISTICS');
+    cli.horizontalLine();
+    cli.verticalSpace(2);
+
+    // Show eaach command, followed by its explation in white and yellow, respectively
+    for(let key in stats){
+        if(stats.hasOwnProperty(key)){
+            let value = stats[key];
+            let line = '      \x1b[33m '+key+'      \x1b[0m';
+            let padding = 80 - line.length;
+            for(i = 0; i < padding; i++){
+                line+=' ';
+            }
+            line+=value;
+            console.log(line);
+            cli.verticalSpace();
+        }
+    }
+
+    cli.verticalSpace(1);
+
+    // End with another horizontal line
+    cli.horizontalLine();
+
+
 };
 
 // List users
