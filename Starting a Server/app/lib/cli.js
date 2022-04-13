@@ -13,6 +13,7 @@ class _events extends events{};
 let e = new _events();
 let os = require('os');
 let v8 = require('v8');
+let _data = require('./data');
 
 // Instatiate the CLI module object
 let cli = {};
@@ -198,7 +199,22 @@ cli.responders.stats = function(){
 
 // List users
 cli.responders.listUsers = function(){
-    console.log('You asked to list users');
+    _data.list('users',function(err,userIds){
+        if(!err && userIds && userIds.length > 0){
+            cli.verticalSpace(); 
+            userIds.forEach(function(userId){
+                _data.read('users',userId,function(err,userData){
+                    if(!err && userData){
+                        let line = 'Name: '+userData.firstName+' '+userData.lastName+' '+userData.phone+' Checks: ';
+                        let numberOfChecks = typeof(userData.checks) == 'object' && userData.checks instanceof Array && userData.checks.length > 0 ? userData.checks.length : 0;
+                        line+=numberOfChecks;
+                        console.log(line);
+                        cli.verticalSpace(); 
+                    }
+                });
+            });
+        }
+    });
 };
 
 // More user info
