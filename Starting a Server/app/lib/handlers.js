@@ -8,6 +8,8 @@ const config = require('./config');
 // Define the handlers
 let handlers = {};
 
+// **************************** CLIENT HANDLERS ******************************************** //
+
 /*
  * HTML Handlers
  * 
@@ -360,11 +362,17 @@ handlers.public = function(data,callback){
 };
 
 
-
+// **************************** API HANDLERS ******************************************** //
 /*
  * JSON API Handlers
  * 
  */
+
+// Example error
+handlers.exampleError = function(data,callback){
+    let err = new Error('This is an example error');
+    throw(err);
+};
 
 //  ************************** USERS SERIVCE ******************************************* //
 
