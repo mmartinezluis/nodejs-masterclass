@@ -39,7 +39,7 @@ lib.append = function(file,str,callback){
     });
 };
 
-// List all the logs, and optinoally includ ethe compressed logs
+// List all the logs, and optinoally include the compressed logs
 lib.list = function(includeCompressedLogs,callback){
     fs.readdir(lib.baseDir,function(err,data){
         if(!err && data && data.length > 0){
@@ -52,7 +52,7 @@ lib.list = function(includeCompressedLogs,callback){
 
                 // Add on the .gzfiles
                 if(fileName.indexOf('.gz.b64') > -1 && includeCompressedLogs){
-                    trimmedFileNames.push(fileName.exports(',gz.b64',''));
+                    trimmedFileNames.push(fileName.replace('.gz.b64',''));
                 }
             });
             callback(false,trimmedFileNames);

@@ -14,6 +14,8 @@ let e = new _events();
 let os = require('os');
 let v8 = require('v8');
 let _data = require('./data');
+let _logs = require('./logs');
+let helpers = require('./helpers');
 
 // Instatiate the CLI module object
 let cli = {};
@@ -52,7 +54,7 @@ e.on('more check info',function(str){
     cli.responders.moreCheckInfo(str);
 });
 
-e.on('list logs',function(str){
+e.on('list logs',function(){
     cli.responders.listLogs();
 });
 
@@ -76,7 +78,7 @@ cli.responders.help = function(){
         'more user info --{userId}': 'Show details of a specific user',
         'list chekcs --up --down': 'Show alit of all the active checks in the system, including their state. The "--up" and the "--down" flags are both optional',
         'more check info --{checkId}': 'Show details of a specified check',
-        'list logs': 'Show a list of all the log files available to be read (compressed and uncompressed)',
+        'list logs': 'Show a list of all the log files available to be read (compressed only)',
         'more log info --{fileNmae}': 'Show details of a specified log file'
     };
 
@@ -285,12 +287,41 @@ cli.responders.moreCheckInfo = function(str){
 
 // List logs
 cli.responders.listLogs = function(){
-    console.log('You asked to list logs');
+    _logs.list(true,function(err,logFileNames){
+        if(!err && logFileNames && logFileNames.length > 0){
+            cli.verticalSpace();
+            logFileNames.forEach(function(logFileName){
+                if(logFileName.indexOf('-') > -1){
+                    console.log(logFileName);
+                    cli.verticalSpace();
+                }
+            });
+        }
+    });
 };
 
 // More log info
 cli.responders.moreLogInfo = function(str){
-    console.log('You asked for more log info',str);
+    // Get the id from the string 
+    let arr = str.split('--');
+    let logFileName = typeof(arr[1]) == 'string' && arr[1].trim().length > 0 ? arr[1].trim() : false;
+    if(logFileName){
+        cli.verticalSpace();
+        // Decompress the log
+        _logs.decompress(logFileName,function(err,strData){
+            if(!err && strData){
+                // Split into lines
+                let arr = strData.split('\n');
+                arr.forEach(function(jsonString){
+                    let logObject = helpers.parseJsonToObject(jsonString);
+                    if(logObject && JSON.stringify(logObject) !== '{}'){
+                        console.dir(logObject,{'colors' : true});
+                        cli.verticalSpace();
+                    }
+                });
+            }
+        })
+    }
 };
 
 
