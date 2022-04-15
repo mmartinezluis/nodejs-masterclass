@@ -9,7 +9,7 @@ let example = {};
 
 // Init function
 example.init = function(){
-    // This is an error created intentionally (but is not defined)
+    // This is an error created intentionally (bar is not defined)
     let foo = bar;
 };
 
