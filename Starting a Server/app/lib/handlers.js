@@ -6,6 +6,14 @@ const helpers = require('./helpers');
 const config = require('./config');
 const _url = require('url');
 const dns = require('dns');
+const _performance = require('perf_hooks').performance;
+const util = require('util');
+const debug = util.debuglog('performance');
+
+
+//  TO SEE THE LOGS FROM THE PERFORMANCE MODULE, START THE APP USING
+//                      NODE_DEBUG=performance node index.js (or initializtion file)
+//  THEN MAKE A POST REQUEST TO "api/tokens" (using POSTMAN or the User interface (UI))
 
 // Define the handlers
 let handlers = {};
@@ -625,16 +633,23 @@ handlers._tokens = {};
 // Required data: phone, password
 // Optional data: none
 handlers._tokens.post = function(data,callback){
+    _performance.mark('entered function');
     const phone = typeof(data.payload.phone) == 'string' && data.payload.phone.trim().length == 10 ? data.payload.phone.trim() : false;
     const password = typeof(data.payload.password) == 'string' && data.payload.password.trim().length > 0 ? data.payload.password.trim() : false;
+    _performance.mark('inputs validated');
     if(phone && password){
         // Lookup the use who matches tha phone number
+        _performance.mark('beginning user lookup');
         _data.read('users',phone,function(err,userData){
+            _performance.mark('user lookup complete');
             if(!err && userData){
                 // Hashed the ssent password and compare it to the password contained in the user object 
+                _performance.mark('beginning password hashing');
                 const hashedPassword = helpers.hash(password);
+                _performance.mark('password hashing complete');
                 if(hashedPassword == userData.hashedPassword){
                     // If valid, create a new token with a random name. Set experiation data one hour in the future
+                    _performance.mark('creating data for token');
                     const tokenId = helpers.createRandomString(20);
                     const expires = Date.now() + 1000 * 60 * 60;  // Expires one hour from current time
                     const tokenObject = {
@@ -642,9 +657,27 @@ handlers._tokens.post = function(data,callback){
                         'id' : tokenId,
                         'expires' : expires
                     };
-                    console.log(tokenObject)
+
                     // Store the token
+                    _performance.mark('beginning storing token');
                     _data.create('tokens',tokenId,tokenObject,function(err){
+                        _performance.mark('storing token complete');
+                         
+                        // Gather all the measurements
+                        _performance.measure('Beggining to end','entered function','storing token complete');
+                        _performance.measure('Validating user input','entered function','inputs validated');
+                        _performance.measure('User lookup','beginning user lookup','user lookup complete');
+                        _performance.measure('Password hashing','beginning password hashing','password hashing complete');
+                        _performance.measure('Token data creation','creating data for token','beginning storing token');
+                        _performance.measure('Token storing','beginning storing token','storing token complete');
+
+                        // Log out all the measurements
+                        let measurements = _performance.getEntriesByType('measure');
+                        measurements.forEach((measurement) => { 
+                            debug('\x1b[33m%s\x1b[0m',measurement.name+" "+measurement.duration);
+                        });
+
+
                         if(!err){
                             callback(200,tokenObject);
                         } else {
