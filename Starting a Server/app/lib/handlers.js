@@ -4,6 +4,8 @@
 const _data = require('./data');
 const helpers = require('./helpers');
 const config = require('./config');
+const _url = require('url');
+const dns = require('dns');
 
 // Define the handlers
 let handlers = {};
@@ -811,38 +813,48 @@ handlers._checks.post =function(data,callback){
                         const userChecks = typeof(userData.checks) == 'object' && userData.checks instanceof Array ? userData.checks : [];
                         // Verffiy that the user has less than the number of max-checks-per-user
                         if(userChecks.length < config.maxChecks){
-                            // Create a random id for the check
-                            const checkId = helpers.createRandomString(20);
 
-                            // Cretae the check object and inlucd ehte user's phone
-                            const checkObject = {
-                                'id' : checkId,
-                                'userPhone' : userPhone,
-                                'protocol' : protocol,
-                                'url' : url,
-                                'method' : method,
-                                'successCodes' : successCodes,
-                                'timeoutSeconds' : timeoutSeconds
-                            };
+                            // Verify that the URL given has DNS entries (and therefore can resolve)
+                            // FLAG: NOT RECOMMENDED TO USE 'url.parse()'
+                            const parseUrl = _url.parse(protocol+"://"+url,true);
+                            const hostName =  typeof(parseUrl.hostname) == 'string' && parseUrl.hostname.length > 0 ? parseUrl.hostname : false;
+                            dns.resolve(hostName,function(err,records){
+                                if(!err && records){
+                                    // Create a random id for the check
+                                    const checkId = helpers.createRandomString(20);
 
-                            // Persist the object
-                            _data.create('checks',checkId,checkObject,function(err){
-                                if(!err){
-                                    // Add the checkId to the user's boject
-                                    userData.checks = userChecks;
-                                    userChecks.push(checkId);
-
-                                    // Save the new user data
-                                    _data.update('users',userPhone,userData,function(err){
+                                    // Cretae the check object and inlucd ehte user's phone
+                                    const checkObject = {
+                                        'id' : checkId,
+                                        'userPhone' : userPhone,
+                                        'protocol' : protocol,
+                                        'url' : url,
+                                        'method' : method,
+                                        'successCodes' : successCodes,
+                                        'timeoutSeconds' : timeoutSeconds
+                                    };
+                                    // Persist the object
+                                    _data.create('checks',checkId,checkObject,function(err){
                                         if(!err){
-                                            // Return the data about the new check
-                                            callback(200,checkObject);
+                                            // Add the checkId to the user's boject
+                                            userData.checks = userChecks;
+                                            userChecks.push(checkId);
+
+                                            // Save the new user data
+                                            _data.update('users',userPhone,userData,function(err){
+                                                if(!err){
+                                                    // Return the data about the new check
+                                                    callback(200,checkObject);
+                                                } else {
+                                                    callback(500,{'Error' : 'Could not update the user with the new check'});
+                                                }
+                                            })
                                         } else {
-                                            callback(500,{'Error' : 'Could not update the user with the new check'});
+                                            callback(500,{'Error' : 'Could not create tthe new check'});
                                         }
-                                    })
+                                    });
                                 } else {
-                                    callback(500,{'Error' : 'Could not create tthe new check'});
+                                    callback(400,{'Error' : 'The hostname of the URL entered did not resolve to any DNS entries'});
                                 }
                             });
                         } else {
