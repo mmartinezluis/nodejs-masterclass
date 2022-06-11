@@ -314,7 +314,7 @@ handlers.favicon = function(data,callback){
    // Reject any request that isn't a  GET
    if(data.method == 'get'){
     //  Read in the favicon's data
-    helpers.getStaticAssets('favicon.ico',function(err,data){
+    helpers.getStaticAsset('favicon.ico',function(err,data){
         if(!err && data){
             // Callback the data
             callback(200,data,'favicon');
@@ -332,7 +332,7 @@ handlers.favicon = function(data,callback){
 handlers.public = function(data,callback){
     // Reject any request that isn't a  GET
     if(data.method == 'get'){
-     //  Read in the favicon's data
+         // Get the filename being requested
         let trimmedAssetName = data.trimmedPath.replace('public','').trim();
         if(trimmedAssetName.length > 0){
             //  Read in the asset's data

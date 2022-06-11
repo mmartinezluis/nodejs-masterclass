@@ -139,10 +139,12 @@ server.processHandlerResponse = function(res,method,trimmedPath,statusCode,paylo
         payloadString = typeof(payload) == 'string' ? payload : '';
     }
     if(contentType == 'favicon'){
+        console.log("You called the favicon")
         res.setHeader('Content-Type','image/x-icon');
         payloadString = typeof(payload) !== 'undefined' ? payload : '';
     }
     if(contentType == 'css'){
+        console.log("You called a css file")
         res.setHeader('Content-Type','text/css');
         payloadString = typeof(payload) !== 'undefined' ? payload : '';
     }
